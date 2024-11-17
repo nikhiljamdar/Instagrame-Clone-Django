@@ -5,12 +5,10 @@ FROM python:3.10-slim
 WORKDIR /app
 
 # Step 3: Copy the current project files to the container
-COPY . /app/.
+COPY requirements.txt /app/requirements.txt
 
-# Step 4: Install Python dependencies
-RUN python -m venv /opt/venv \
-    && . /opt/venv/bin/activate \
-    && pip install --upgrade pip \
+# Install Python dependencies
+RUN pip install --upgrade pip \
     && pip install -r requirements.txt
 
 # Step 5: Expose the port your app runs on (usually 8000 for Django)
