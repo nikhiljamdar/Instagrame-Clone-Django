@@ -1,32 +1,15 @@
-# Step 1: Use an official Python runtime as a parent image
-FROM python:3.10-slim
+FROM python:3.11.3-slim-bullseye
 
-# Step 2: Set environment variables to prevent Python from buffering outputs
-ENV PYTHONDONTWRITEBYTECODE=1
-ENV PYTHONUNBUFFERED=1
-
-# Step 3: Install system dependencies
-RUN apt-get update && apt-get install -y \
-    build-essential \
-    default-libmysqlclient-dev \
-    gcc \
-    python3-dev \
+RUN apt-get update \
+    && apt-get upgrade -y \
+    && apt-get install -y gcc default-libmysqlclient-dev pkg-config libpq-dev build-essential\
     && rm -rf /var/lib/apt/lists/*
 
-# Step 4: Set the working directory in the container
-WORKDIR /app
+WORKDIR /usr/src/app
+COPY . .
 
-# Step 5: Copy the current project files to the container
-COPY . /app/.
-
-# Step 6: Install Python dependencies
-RUN python -m venv /opt/venv \
-    && . /opt/venv/bin/activate \
-    && pip install --upgrade pip \
+RUN pip install --upgrade pip \
+    && pip install mysqlclient \
     && pip install -r requirements.txt
 
-# Step 7: Expose the port your app runs on (usually 8000 for Django)
-EXPOSE 8000
-
-# Step 8: Set the default command to run your Django app
 CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
